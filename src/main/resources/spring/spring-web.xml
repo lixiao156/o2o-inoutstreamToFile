@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+    <!--  配置spring-mvc-->
+    <!--  开启spring-mvc注解模式-->
+    <mvc:annotation-driven />
+    <!--  静态资源默认的servlet配置-->
+    <!--  加入对静态资源的处理：js,gif,png-->
+    <!--  允许使用"/" 做整体的映射  配置mvc:resources  告知spring-mvc核心DispatcherServlet不要拦截resources下的所有路径 将他们作为静态资源 交给默认的servlet处理-->
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:default-servlet-handler/>
+    <!--  定义视图解析器你根据url 解析相对于的文件-->
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--  文件前缀定义/WEB-INF/html文件夹  url不能直接访问WEB-INF文件夹下的文件-->
+        <property name="prefix" value="/WEB-INF/html/"/>
+        <!--  文件解析为后缀结尾文件-->
+        <property name="suffix" value=".html"/>
+    </bean>
+    <context:component-scan base-package="com.imooc.o2o"/>
+</beans>

@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--  scan设置为true的时候，如果配置文件发生改变了，自动重新加载-->
+<!--  检测配置文件的修改，是否有时间间隔 默认单位是ms  可以设置每分钟扫描一次-->
+<!--  debug 如果设置为true那么将会打印出logback内部信息 事实检测logback状态信息-->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!--  定义参数常量log.level 给他一个值debug    log.level 有五个级别 trace < debug < info < warn < error  只会显示右边的全部-->
+    <!--  每次需要new一个log实例  logger 在调用log里面的方法 logger.trace("")-->
+    <property name="log.level" value="debug"/>
+    <!--  文件保留多长时间-->
+    <property name="log.maxHistory" value="30"/>
+    <!--  日志存储的根路径-->
+    <property name="log.filePath" value="${catalina.base}/logs/webapps"/>
+    <!--  日志展现的格式 -->
+    <!--  %d 表示的是时间的格式 %thread  程序是由哪个线程执行的 -5level：什么级别的  向左对其五个字符宽度显示 -->
+    <!--  %logger{50} 显示日志的信息  %msg表示哪一个类里面输出的相关的日志信息 %n换行显示-->
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
+    <!--  四个-->
+    <!--  用来告诉日志的输出的介质-->
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <!--  相当于la gout  负责将日志转化为字符串 也负责将日志输出到文件中去-->
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!--  encoder里面有一个pattern来定义log的输出格式-->
+
+    </appender>
+    <!--  DEBUG-->
+    <!--  滚动输出的意思 意思是滚动输出 按照时间生成新的日志文件-->
+    <appender name="debugAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.filePath}/debug.log</file>
+        <!--  基于时间来滚动日志-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--  文件名称  ${log.filePath}：是一个绝对路径   gz:自动对日志压缩-->
+            <fileNamePattern>${log.filePath}/debug/debug.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <!--  文件的保存多久 历史数量  前面property 定义value = 30 天-->
+            <!--  -->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!--  过滤只记录DEBUG的日志-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <!--  符合debug日志-->
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <!--  INFO-->
+    <!--  滚动输出的意思 意思是滚动输出 按照时间生成新的日志文件-->
+    <appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.filePath}/info.log</file>
+        <!--  基于时间来滚动日志-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--  文件名称  ${log.filePath}：是一个绝对路径   gz:自动对日志压缩-->
+            <fileNamePattern>${log.filePath}/info/info.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <!--  文件的保存多久 历史数量  前面property 定义value = 30 天-->
+            <!--  -->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!--  过滤只记录DEBUG的日志-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <!--  符合debug日志-->
+        <level>INFO</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <!--  ERROR-->
+    <!--  滚动输出的意思 意思是滚动输出 按照时间生成新的日志文件-->
+    <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.filePath}/error.log</file>
+        <!--  基于时间来滚动日志-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--  文件名称  ${log.filePath}：是一个绝对路径   gz:自动对日志压缩-->
+            <fileNamePattern>${log.filePath}/error/error.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <!--  文件的保存多久 历史数量  前面p
+            roperty 定义value = 30 天-->
+            <!--  -->
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <!--  过滤只记录error的日志-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <!--  符合debug日志-->
+        <level>ERROR</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <!--  ${log.level}对应上面默认的property 里面设置的debug ref映射配置的三个输出logerde的方法-->
+    <!--  当additivity = "true" 时候 就会将父类的 <root level="info"></root> 放到 <logger里面 不会输出info级别而是和logger一致-->
+    <logger name="com.imooc.o2o" level="${log.level}" additivity="true">
+        <appender-ref ref="debugAppender"/>
+        <appender-ref ref="infoAppender"/>
+        <appender-ref ref="errorAppender"/>
+    </logger>
+    <!--  root是一个特殊的logger 指定info-->
+    <!--  如果logger没有指定level基本会继承默认的root级别 -->
+    <root level="info">
+        <!--  日志输出不到指定的catalina.base的目录下 查找到了此处的错误-->
+        <appender-ref ref="consoleAppender"/>
+    </root>
+</configuration>
