@@ -6,6 +6,7 @@ import com.imooc.o2o.enums.ShopSateEnum;
 import java.util.List;
 
 /**
+ * 封装了shop对象的各种信息以及shop的状态信息
  * @author lixw
  * @date created in 12:17 2019/1/3
  */

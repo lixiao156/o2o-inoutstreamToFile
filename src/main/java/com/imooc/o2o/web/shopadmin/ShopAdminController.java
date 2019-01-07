@@ -19,4 +19,26 @@ public class ShopAdminController {
     public String shopOperation() {
         return "shop/shopoperation";
     }
+
+
+    /**
+     * 转发shoplist.html页面
+     * @return
+     */
+    @RequestMapping(value = "/shoplist")
+    public String shopList() {
+        return "shop/shoplist";
+    }
+
+    /**
+     * 编辑路由
+     * @return
+     */
+    @RequestMapping(value = "/shopmanagement")
+    public String shopManagement() {
+        return "shop/shopmanagement";
+    }
 }
+
+
+

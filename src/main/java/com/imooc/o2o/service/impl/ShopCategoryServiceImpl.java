@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
+ * 作为事务管理 失败回滚的作用
  * @author lixw
  * @date created in 10:02 2019/1/5
  */

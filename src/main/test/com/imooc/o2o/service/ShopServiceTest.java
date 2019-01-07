@@ -7,9 +7,13 @@ import com.imooc.o2o.entity.PersonInfo;
 import com.imooc.o2o.entity.Shop;
 import com.imooc.o2o.entity.ShopCategory;
 import com.imooc.o2o.enums.ShopSateEnum;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Date;
 import static org.junit.Assert.*;
 public class ShopServiceTest extends BaseTest {
@@ -21,7 +25,7 @@ public class ShopServiceTest extends BaseTest {
 
 
     @Test
-    public void addShop() {
+    public void addShop() throws FileNotFoundException {
         Shop shop = new Shop();
         PersonInfo owner = new PersonInfo();
         Area area = new Area();
@@ -32,18 +36,47 @@ public class ShopServiceTest extends BaseTest {
         shop.setOwner(owner);
         shop.setArea(area);
         shop.setShopCategory(shopCategory);
-        shop.setShopName("测试的店铺1");
-        shop.setShopDesc("test1");
-        shop.setShopAddr("test1");
-        shop.setPhone("test1");
-        shop.setShopImg("test1");
+        shop.setShopName("测试的店铺3");
+        shop.setShopDesc("test3");
+        shop.setShopAddr("test3");
+        shop.setPhone("test3");
+        shop.setShopImg("test3");
         shop.setCreateTime(new Date());
         shop.setEnableStatus(ShopSateEnum.CHECK.getState());
         //接口报错 看是否将接口实现类注入
         shop.setAdvice("审核中");
         File shopImg = new File("G:/ssmpicture/picture.jpg");
         System.out.println(shopImg.toString());
-        ShopExecution se = shopService.addShop(shop, shopImg);
+        InputStream is = new FileInputStream(shopImg);
+        ShopExecution se = shopService.addShop(shop, is,shopImg.getName());
         assertEquals(ShopSateEnum.CHECK.getState(),se.getState());
+    }
+
+    @Test
+    @Ignore
+    public void modifyShop() {
+        Shop shop = shopService.getByShopId(31);
+        System.out.println(shop);
+        shop.setShopName("修改后的店铺名");
+        File shopImg = new File("G:\\ssmpicture2\\youxiang.jpg");
+        try {
+            InputStream is = new FileInputStream(shopImg);
+            ShopExecution shopExecution = shopService.modifyShop(shop,is,shopImg.getName());
+            System.out.println("新的图片地址为："+shopExecution.getShop().getShopImg());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    public void getShopList() {
+        Shop shopCondition = new Shop();
+        ShopCategory sc = new ShopCategory();
+        sc.setShopCategoryId(1L);
+        shopCondition.setShopCategory(sc);
+        ShopExecution se = shopService.getShopList(shopCondition, 1, 2);
+        System.out.println("店铺列表数为: " + se.getShopList().size());
+        System.out.println("店铺总数为: " + se.getCount());
     }
 }

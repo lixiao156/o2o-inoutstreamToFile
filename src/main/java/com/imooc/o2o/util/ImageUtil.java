@@ -10,6 +10,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -66,18 +67,18 @@ public class ImageUtil {
      * //处理用户上传过来的文件流  File 转CommonsMultipartFile 困难
      * public static String generateThumbnail(CommonsMultipartFile thumbnail, String targetAddr) {
      *
-     * @param thumbnail
+     * @param
      * @param targetAddr
      * @return
      */
 
-    public static String generateThumbnail(File thumbnail, String targetAddr) {
+    public static String generateThumbnail(InputStream thumbnailInputStream, String fileName,String targetAddr) {
         /**
          * 不使用用户上传图片的文件名 而是使用随机的名字
          * 获取图片的扩展名:参数就是文件传输过来的文件流
          */
         String realFileName = getRandomFileName();
-        String extension = getFileExtension(thumbnail);
+        String extension = getFileExtension(fileName);
         //创建目录
         makeDirPath(targetAddr);
         //获取相对路径
@@ -86,7 +87,7 @@ public class ImageUtil {
         System.out.println("存儲文件絕對地址："+dest.getAbsolutePath());
 
         try {
-            Thumbnails.of(thumbnail).size(200, 200).
+            Thumbnails.of(thumbnailInputStream).size(200, 200).
                     watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File("G:\\ssmpicture\\youxiang.jpg")),
                             0.25f).outputQuality(0.8f).toFile(dest);
 
@@ -117,14 +118,13 @@ public class ImageUtil {
     /**
      * 获取输入流 的扩展名 ：文件格式
      *
-     * @param cFile
+     * @param
      * @return
      */
-    public static String getFileExtension(File cFile) {
-        //获取输入文件流的文件名字 原来的名字
-        String originalFileName = cFile.getName();
+    public static String getFileExtension(String fileName) {
+
         //substring:来获取.号后面的字符
-        return originalFileName.substring(originalFileName.lastIndexOf("."));
+        return fileName.substring(fileName.lastIndexOf("."));
     }
 
     /**
@@ -151,6 +151,31 @@ public class ImageUtil {
                     outputQuality(0.8f).toFile("G:/ssmpicture/picture2.jpg");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * 如果需要更新店铺中的图片，那么需要删除原来的图片
+     * 根据原来图片的路径删除原来的图片信息
+     * 如果storePath是文件的路径就删除该文件
+     * 如果storePath是目录路径就删除目录下的所有文件
+     * getImgBasePath()：获取全路径
+     * @param storePath
+     */
+    public static void deletFileOrPath(String storePath){
+
+        File fileOrPath = new File(PathUtil.getImgBasePath()+storePath);
+        if (fileOrPath.exists()){
+            //1.fileOrPath 是一个目录下面的文件全部删除
+            if(fileOrPath.isDirectory()){
+                File files[] = fileOrPath.listFiles();
+                for(int i = 0;i < files.length;i++){
+                    files[i].delete();
+                }
+            }
+            //2.如果是文件的话直接删除  如果是目录 文件删完还是要删除最后的目录的
+            fileOrPath.delete();
         }
 
     }

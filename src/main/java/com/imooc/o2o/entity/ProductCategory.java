@@ -3,6 +3,7 @@ package com.imooc.o2o.entity;
 import java.util.Date;
 
 /**
+ * 商品分类
  * @author lixw
  * @date created in 18:31 2018/12/30
  */
@@ -69,5 +70,18 @@ public class ProductCategory {
 
     public void setLastEditTime(Date lastEditTime) {
         this.lastEditTime = lastEditTime;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductCategory{" +
+                "productCategoryId=" + productCategoryId +
+                ", shopId=" + shopId +
+                ", productCategoryName='" + productCategoryName + '\'' +
+                ", productCategoryDesc='" + productCategoryDesc + '\'' +
+                ", priority=" + priority +
+                ", createTime=" + createTime +
+                ", lastEditTime=" + lastEditTime +
+                '}';
     }
 }
