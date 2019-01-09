@@ -1,6 +1,7 @@
 package com.imooc.o2o.web.shopadmin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.imooc.o2o.dto.ImageHolder;
 import com.imooc.o2o.dto.ShopExecution;
 import com.imooc.o2o.entity.Area;
 import com.imooc.o2o.entity.PersonInfo;
@@ -16,9 +17,7 @@ import com.imooc.o2o.util.ImageUtil;
 import com.imooc.o2o.util.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -36,7 +35,7 @@ import java.util.Map;
  * @author lixw
  * @date created in 22:59 2019/1/3
  */
-@Controller
+@RestController
 //访问路径
 @RequestMapping("/shopadmin")
 public class ShopManagementController {
@@ -51,37 +50,32 @@ public class ShopManagementController {
     @Autowired
     private AreaService areaService;
 
-    @RequestMapping(value = "/getshopbyid", method = RequestMethod.GET)
-    @ResponseBody
+
+    @GetMapping(value = "/getshopbyid")
     private Map<String, Object> getShopById(HttpServletRequest request) {
-        Map<String, Object> modelMap = new HashMap<String, Object>();
+        //类型推断
+        Map<String, Object> modelMap = new HashMap<>(8);
         //shopId 是前端传过来的  是用来获取店铺信息的
-        Long shopId = HttpServletRequestUtil.getLong(request, "shopId");
+        long shopId = HttpServletRequestUtil.getLong(request, "shopId");
         if (shopId > -1) {
             //获取店铺的信息
-            try {
-                Shop shop = shopService.getByShopId(shopId);
-                List<Area> areaList = areaService.getAreaList();
+            Shop shop = shopService.getByShopId(shopId);
+            if (shop != null){
                 modelMap.put("shop", shop);
+                List<Area> areaList = areaService.getAreaList();
                 modelMap.put("areaList", areaList);
-                modelMap.put("success", true);
-            } catch (Exception e) {
-                modelMap.put("success", false);
-                modelMap.put("errMsg", e.toString());
-                e.printStackTrace();
-
+            } else {
+                modelMap.put("errMsg", "the result is empty");
             }
+            modelMap.put("success", true);
         } else {
             modelMap.put("success", false);
             modelMap.put("errMsg", "empty shopId");
         }
-
         return modelMap;
-
     }
 
     @RequestMapping(value = "/getshopinitinfo", method = RequestMethod.GET)
-    @ResponseBody
     private Map<String, Object> getShopInitInfo() {
         Map<String, Object> modelMap = new HashMap<String, Object>();
         List<ShopCategory> shopCategoryList = new ArrayList<ShopCategory>();
@@ -116,7 +110,6 @@ public class ShopManagementController {
      * @return
      */
     @RequestMapping(value = "/registershop", method = RequestMethod.POST)
-    @ResponseBody
     private Map<String, Object> registerShop(HttpServletRequest request) {
         Map<String, Object> modelMap = new HashMap<String, Object>();
         //引入验证码
@@ -176,6 +169,8 @@ public class ShopManagementController {
         }
         //2。注册店铺  判断实例是不是为空
         if (shop != null && shopImg != null) {
+
+
             //由于前段传递过来的信息可能是不可靠的，需要竟可能的减少使用前段传递的信息 使用后端获取
             //使用session获取店主的信息
             /**
@@ -201,7 +196,8 @@ public class ShopManagementController {
             //前端传递过来的信息存储到shop里面去  addShop(shop,shopImg);需要将CommonsMultipartFile转化为file类型，看源码中的转化方法
             ShopExecution se = null;
             try {
-                se = shopService.addShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                ImageHolder imageHolder = new ImageHolder(shopImg.getInputStream(),shopImg.getOriginalFilename());
+                se = shopService.addShop(shop, imageHolder);
                 //状态和
                 if (se.getState() == ShopSateEnum.CHECK.getState()) {
                     modelMap.put("success", true);
@@ -245,7 +241,6 @@ public class ShopManagementController {
 
 
     @RequestMapping(value = "/modifyshop", method = RequestMethod.POST)
-    @ResponseBody
     private Map<String, Object> modifyShop(HttpServletRequest request) {
         Map<String, Object> modelMap = new HashMap<String, Object>();
         //引入验证码
@@ -319,10 +314,13 @@ public class ShopManagementController {
             //前端传递过来的信息存储到shop里面去  addShop(shop,shopImg);需要将CommonsMultipartFile转化为file类型，看源码中的转化方法
             ShopExecution se = null;
             try {
+                ImageHolder imageHolder = new ImageHolder(shopImg.getInputStream(),shopImg.getOriginalFilename());
+
+
                 if (shopImg == null) {
-                    se = shopService.modifyShop(shop, null, null);
+                    se = shopService.modifyShop(shop, null);
                 } else {
-                    se = shopService.modifyShop(shop, shopImg.getInputStream(), shopImg.getOriginalFilename());
+                    se = shopService.modifyShop(shop, null);
                     //状态和注册店铺不一样 因为 注册的时候需要审核 而修改一般信息是不需要审核的 默认是SUCCESS
                     if (se.getState() == ShopSateEnum.SUCCESS.getState()) {
                         modelMap.put("success", true);
@@ -351,7 +349,6 @@ public class ShopManagementController {
 
 
     @RequestMapping(value = "/getshoplist", method = RequestMethod.GET)
-    @ResponseBody
     private Map<String, Object> getShopList(HttpServletRequest request) {
         //Map用来存用户的信息
         Map<String, Object> modelMap = new HashMap<>();
@@ -380,7 +377,6 @@ public class ShopManagementController {
     }
 
     @RequestMapping(value = "/getShopmanagementinfo", method = RequestMethod.GET)
-    @ResponseBody
     private Map<String, Object> getShopManagementInfo(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
 
@@ -404,7 +400,6 @@ public class ShopManagementController {
             request.getSession().setAttribute("currentShop", currentShop);
             result.put("redirect", false);
         }
-
         return result;
     }
 

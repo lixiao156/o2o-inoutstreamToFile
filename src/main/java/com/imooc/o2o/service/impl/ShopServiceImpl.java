@@ -1,6 +1,7 @@
 package com.imooc.o2o.service.impl;
 
 import com.imooc.o2o.dao.ShopDao;
+import com.imooc.o2o.dto.ImageHolder;
 import com.imooc.o2o.dto.ShopExecution;
 import com.imooc.o2o.entity.Shop;
 import com.imooc.o2o.enums.ShopSateEnum;
@@ -28,7 +29,7 @@ public class ShopServiceImpl implements ShopService {
     private ShopDao shopDao;
 
     @Override
-    public ShopExecution addShop(Shop shop, InputStream shopImgInputStream, String fileName) throws ShopOperationException {
+    public ShopExecution addShop(Shop shop, ImageHolder shopImgInputStream) throws ShopOperationException {
         /**
          * 如果对象为空 返回 NULL shop
          * 也可以加 地址 电话 非空判断
@@ -52,9 +53,9 @@ public class ShopServiceImpl implements ShopService {
                 throw new RuntimeException("店铺创建失败");
             } else {
                 try {
-                    if (shopImgInputStream != null) {
+                    if (shopImgInputStream.getImage() != null) {
                         //储存图片 传引用
-                        addShopImg(shop, shopImgInputStream, fileName);
+                        addShopImg(shop, shopImgInputStream);
 
                         //shop.getShopImg();
                     }
@@ -87,14 +88,14 @@ public class ShopServiceImpl implements ShopService {
     }
 
 
-    private void addShopImg(Shop shop, InputStream shopshopImgInputStreamImg, String fileName) {
+    private void addShopImg(Shop shop, ImageHolder shopshopImgInputStreamImg) {
         //获取shop 图片目录的相对值路径
         String dest = PathUtil.getShopImagePath(shop.getShopId());
         /**
          * 得到绝对路径将图片储存到里面 返回图片的相对子路径
          * 更新到数据库
          */
-        String shopImgAddr = ImageUtil.generateThumbnail(shopshopImgInputStreamImg, fileName, dest);
+        String shopImgAddr = ImageUtil.generateThumbnail(shopshopImgInputStreamImg, dest);
         System.out.println(shopImgAddr);
         /**
          * 更新到数据库里面去
@@ -115,12 +116,12 @@ public class ShopServiceImpl implements ShopService {
      *
      * @param shop
      * @param shopImgInputStream
-     * @param fileName
+     * @param
      * @return
      * @throws ShopOperationException
      */
     @Override
-    public ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream, String fileName) throws ShopOperationException {
+    public ShopExecution modifyShop(Shop shop, ImageHolder shopImgInputStream) throws ShopOperationException {
         try {
             if (shop == null || shop.getShopId() == null) {
                 return new ShopExecution(ShopSateEnum.NULL_SHOP);
@@ -129,7 +130,7 @@ public class ShopServiceImpl implements ShopService {
                  *  1.判断是否需要处理图片  filename 不为null 也不为空的字段
                  *
                  */
-                if (shopImgInputStream != null && fileName != null && !"".equals(fileName)) {
+                if (shopImgInputStream.getImage() != null && shopImgInputStream.getImageName()!= null && !"".equals(shopImgInputStream.getImageName())) {
                     /**
                      *  //获取需要更新图片的shop的地址
                      */
@@ -140,7 +141,7 @@ public class ShopServiceImpl implements ShopService {
                         ImageUtil.deletFileOrPath(tempShop.getShopImg());
                     }
                     //删除原来的图片之后添加新的图片
-                    addShopImg(shop, shopImgInputStream, fileName);
+                    addShopImg(shop, shopImgInputStream);
 
                 }
 

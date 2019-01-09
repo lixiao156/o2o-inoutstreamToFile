@@ -3,6 +3,10 @@ package com.imooc.o2o.web.shopadmin;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author lixw
@@ -12,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "shopadmin", method = {RequestMethod.GET})
 public class ShopAdminController {
     /**
-     *  用来转发的
-     *  return "shop/shopoperation"与spring-web.xml中配置的拼接路径（加头加尾）访问页面
+     * 用来转发的
+     * return "shop/shopoperation"与spring-web.xml中配置的拼接路径（加头加尾）访问页面
      */
     @RequestMapping(value = "/shopoperation")
     public String shopOperation() {
@@ -23,6 +27,7 @@ public class ShopAdminController {
 
     /**
      * 转发shoplist.html页面
+     *
      * @return
      */
     @RequestMapping(value = "/shoplist")
@@ -32,12 +37,25 @@ public class ShopAdminController {
 
     /**
      * 编辑路由
+     *
      * @return
      */
     @RequestMapping(value = "/shopmanagement")
-    public String shopManagement() {
+    public String shopManagement(HttpServletRequest request, @RequestParam("shopId")Long shopId) {
+        request.setAttribute("shopId",shopId);
         return "shop/shopmanagement";
     }
+
+    /**
+     *
+     * @return
+     */
+    @RequestMapping(value = "/productcategorymanagement",method = RequestMethod.GET)
+    public String productCategoryManagement() {
+        return "shop/productcategorymanagement";
+    }
+
+
 }
 
 

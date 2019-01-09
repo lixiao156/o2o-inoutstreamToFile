@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imooc.o2o.dao.ProductCategoryDao">
+    <!--  根据shopId获取店铺的商品分类-->
+    <select id="queryProductCategoryList" resultType="com.imooc.o2o.entity.ProductCategory" parameterType="Long">
+        select
+        product_category_id,
+        product_category_name,
+        product_category_desc,
+        priority,
+        create_time,
+        last_edit_time,
+        shop_id
+        from
+        tb_product_category
+        <where>
+            shop_id = #{shopId}
+        </where>
+        ORDER BY
+        priority
+        DESC
+
+    </select>
+    <!--  批量插入商品分类 参数传入的是list-->
+    <!--  遍历循环 collection：传入的是list  传入：productCategory
+      list和productCategory随意命名的 以productCategory为变量 遍历list
+      中所有的元素  index为计数器  separator：sql中的分隔符
+     2019-01-08 17:08:42.509 [main] DEBUG c.i.o.d.P.batchInsertProductCategory - ==>
+     Preparing: INSERT INTO tb_product_category(product_category_name,product_category_desc,priority,
+     create_time,last_edit_time,shop_id) VALUES ( ?, ?, ?, ?, ?, ? ) , ( ?, ?, ?, ?, ?, ? )
+     selectKey:mybatis中将某个字段设置为主键的标签
+      -->
+
+    <insert id="batchInsertProductCategory" parameterType="java.util.List">
+
+        <selectKey resultType="Long" keyProperty="product_category_id"
+                   order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO
+        tb_product_category(product_category_name,product_category_desc,priority,
+        create_time,last_edit_time,shop_id)
+        VALUES
+
+        <foreach collection="list" item="productCategory" index="index"
+                 separator=",">
+            (
+            #{productCategory.productCategoryName},
+            #{productCategory.productCategoryDesc},
+            #{productCategory.priority},
+            #{productCategory.createTime},
+            #{productCategory.lastEditTime},
+            #{productCategory.shopId}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteProductCategory">
+        <!-- 具体的sql -->
+        DELETE FROM
+        tb_product_category
+        WHERE
+        product_category_id =
+        #{productCategoryId}
+        AND shop_id=#{shopId}
+    </delete>
+</mapper>

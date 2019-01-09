@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.imooc.o2o.dao.ProductImgDao">
+    <!--  Id与接口里面定义的方法名是对应的-->
+    <!--  遍历循环 collection：传入的是list  传入：productCategory
+      list和productCategory随意命名的 以productCategory为变量 遍历list
+      中所有的元素  index为计数器  separator：sql中的分隔符-->
+    <insert id="bathInsertProductImg" parameterType="java.util.List">
+            <selectKey resultType="Long" keyProperty="product_img_id"
+                       order="AFTER">
+                SELECT LAST_INSERT_ID()
+            </selectKey>
+            INSERT INTO
+            tb_product_img(img_addr,img_desc,priority,
+            create_time,product_id)
+            VALUES
+            <foreach collection="list" item="productImg" index="index"
+                     separator=",">
+                (
+                #{productImg.imgAddr},
+                #{productImg.imgDesc},
+                #{productImg.priority},
+                #{productImg.createTime},
+                #{productImg.productId}
+                )
+            </foreach>
+    </insert>
+
+</mapper>

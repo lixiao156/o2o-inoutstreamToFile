@@ -1,6 +1,8 @@
 package com.imooc.o2o.util;
 
+import com.imooc.o2o.dto.ImageHolder;
 import com.imooc.o2o.websuperadmin.AreaController;
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 import org.slf4j.Logger;
@@ -28,6 +30,7 @@ import java.util.Random;
  * @author lixw
  * @date created in 20:49 2019/1/2
  */
+@Slf4j
 public class ImageUtil {
     /**
      * 处理缩略图
@@ -72,13 +75,13 @@ public class ImageUtil {
      * @return
      */
 
-    public static String generateThumbnail(InputStream thumbnailInputStream, String fileName,String targetAddr) {
+    public static String generateThumbnail(ImageHolder thumbnailInputStream,  String targetAddr) {
         /**
          * 不使用用户上传图片的文件名 而是使用随机的名字
          * 获取图片的扩展名:参数就是文件传输过来的文件流
          */
         String realFileName = getRandomFileName();
-        String extension = getFileExtension(fileName);
+        String extension = getFileExtension(thumbnailInputStream.getImageName());
         //创建目录
         makeDirPath(targetAddr);
         //获取相对路径
@@ -87,7 +90,7 @@ public class ImageUtil {
         System.out.println("存儲文件絕對地址："+dest.getAbsolutePath());
 
         try {
-            Thumbnails.of(thumbnailInputStream).size(200, 200).
+            Thumbnails.of(thumbnailInputStream.getImage()).size(200, 200).
                     watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File("G:\\ssmpicture\\youxiang.jpg")),
                             0.25f).outputQuality(0.8f).toFile(dest);
 
@@ -179,4 +182,39 @@ public class ImageUtil {
         }
 
     }
+
+
+    /**
+     * 处理详情图，并返回新生成图片的相对值路径
+     *
+     * @param thumbnail
+     * @param targetAddr
+     * @return
+     */
+    public static String generateNormalImg(ImageHolder thumbnail, String targetAddr) {
+        // 获取不重复的随机值
+        String realFileName = getRandomFileName();
+        // 获取文件的扩展名
+        String extension = getFileExtension(thumbnail.getImageName());
+        // 如果目标路径不存在，则自动创建
+        makeDirPath(targetAddr);
+        // 获取文件存储的相对路径(带文件名)
+        String relativeAddr = targetAddr + realFileName + extension;
+        log.debug("current relativeAddr is : " + relativeAddr);
+        // 获取文件要保存的目标路径
+        File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
+        log.debug("current complete addr is : " + PathUtil.getImgBasePath() + relativeAddr);
+        // 调用Thumbnails生成带有水印的图片
+        try {
+            Thumbnails.of(thumbnail.getImage()).size(337, 640)
+                    .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(basePath + "G:\\ssmpicture\\youxiang.jpg")), 0.25f)
+                    .outputQuality(0.9F).toFile(dest);
+        } catch (IOException e) {
+            log.error(e.toString());
+            throw new RuntimeException("创建缩略图片失败" + e.toString());
+        }
+        // 返回图片相对路径地址
+        return relativeAddr;
+    }
+
 }

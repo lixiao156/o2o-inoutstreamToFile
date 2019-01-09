@@ -1,7 +1,8 @@
 $(function() {
 	//解析路径中的额shopId传入 根据url想后端的controller查数据
 	var shopId = getQueryString('shopId');
-	var shopInfoUrl = '/o2o/shopadmin/getshopmanagementinfo?shopId=' + shopId;
+	console.log("shopId:" + shopId);
+	var shopInfoUrl = '/o2o/shopadmin/getShopmanagementinfo?shopId=' + shopId;
 
 	$.getJSON(shopInfoUrl, function(data) {
 		//如果session中没有查询到值重定向到controller层getshopmanagementinfo里面定义的方法

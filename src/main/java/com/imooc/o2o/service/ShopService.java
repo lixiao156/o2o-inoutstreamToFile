@@ -1,5 +1,6 @@
 package com.imooc.o2o.service;
 
+import com.imooc.o2o.dto.ImageHolder;
 import com.imooc.o2o.dto.ShopExecution;
 import com.imooc.o2o.entity.Shop;
 import com.imooc.o2o.exceptions.ShopOperationException;
@@ -18,7 +19,7 @@ public interface ShopService {
      * @param
      * @return
      */
-    ShopExecution addShop(Shop shop, InputStream shopImgInputStream,String fileName) throws ShopOperationException;
+    ShopExecution addShop(Shop shop, ImageHolder shopImgInputStream) throws ShopOperationException;
 
     /**
      * 根据店铺的Id获取店铺的信息
@@ -32,11 +33,11 @@ public interface ShopService {
      * 修改店铺的信息
      * @param shop
      * @param shopImgInputStream
-     * @param fileName
+     * @param
      * @return
      * @throws ShopOperationException
      */
-    ShopExecution modifyShop(Shop shop, InputStream shopImgInputStream,String fileName) throws ShopOperationException;
+    ShopExecution modifyShop(Shop shop, ImageHolder shopImgInputStream) throws ShopOperationException;
 
 
     /**
