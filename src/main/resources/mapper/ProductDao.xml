@@ -3,6 +3,73 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.imooc.o2o.dao.ProductDao">
+    <!--  数据库字段与实体类字段映射-->
+
+    <resultMap id="productMap" type="com.imooc.o2o.entity.Product">
+        <!--  主键-->
+        <id column="product_id" property="productId"/>
+        <!--  一般字段-->
+        <result column="product_name" property="productName"/>
+        <result column="product_desc" property="productDesc"/>
+        <result column="img_addr" property="imgAddr"/>
+        <result column="normal_price" property="normalPrice"/>
+        <result column="promotion_price" property="promotionPrice"/>
+        <result column="priority" property="priority"/>
+        <result column="create_time" property="createTime"/>
+        <result column="last_edit_time" property="lastEditTime"/>
+        <result column="enable_status" property="enableStatus"/>
+        <!--  assocication可以指定联合的JavaBean对象
+               property="role"指定哪个属性是联合的对象
+               javaType:指定这个属性对象的类型
+
+
+               即为关联表的字段！
+               -->
+        <!--<association property="productCategory" column="product_category_id"-->
+                     <!--javaType="com.imooc.o2o.entity.ProductCategory">-->
+            <!--<id column="product_category_id" property="productCategoryId"/>-->
+            <!--<result column="product_category_name" property="productCategoryName"/>-->
+        <!--</association>-->
+
+        <!--  另外一个关联的表-->
+        <association property="shop" column="shopId" javaType="com.imooc.o2o.entity.Shop">
+            <id column="shop_id" property="shopId"/>
+            <result column="owner_id" property="ownerId"/>
+            <result column="shop_name" property="shopName"/>
+            <result column="shop_desc" property="shopDesc"/>
+            <result column="shop_addr" property="shopAddr"/>
+            <result column="phone" property="phone"/>
+            <result column="shop_img" property="shopImg"/>
+            <result column="longitude" property="longitude"/>
+            <result column="latitude" property="latitude"/>
+            <result column="priority" property="priority"/>
+            <result column="create_time" property="createTime"/>
+            <result column="last_edit_time" property="lastEditTime"/>
+            <result column="enable_status" property="enableStatus"/>
+            <result column="advice" property="advice"/>
+        </association>
+
+        <association property="productCategory" column="product_category_id"
+                     javaType="com.imooc.o2o.entity.ProductCategory">
+            <id column="product_category_id" property="productCategoryId" />
+            <result column="product_category_name" property="productCategoryName" />
+            <result column="product_category_desc" property="productCategoryDesc" />
+            <result column="priority" property="priority" />
+            <result column="create_time" property="createTime" />
+            <result column="last_edit_time" property="lastEditTime" />
+        </association>
+        <collection property="productImgList" column="product_id"
+                    ofType="com.imooc.o2o.entity.ProductImg">
+            <id column="product_img_id" property="productImgId" />
+            <result column="img_addr" property="imgAddr" />
+            <result column="img_desc" property="imgDesc" />
+            <result column="priority" property="priority" />
+            <result column="create_time" property="createTime" />
+            <result column="product_id" property="productId" />
+        </collection>
+    </resultMap>
+
+
     <!--  Id与接口里面定义的方法名是对应的
     useGeneratedKeys="true"自动生成主键
     -->
@@ -35,5 +102,130 @@
                     #{shop.shopId}
                     )
     </insert>
+    <!--  mybatis的动态语句是指的是如果<if  条件满足>  输出这里的部分  </if>-->
+    <select id="queryProductByProductId" parameterType="Long" resultMap="productMap">
+        select
+        p.product_id,
+        p.product_name,
+        p.product_desc,
+        p.img_addr,
+        p.normal_price,
+        p.promotion_price,
+        p.priority,
+        p.create_time,
+        p.last_edit_time,
+        p.enable_status,
+        p.product_category_id,
+        p.shop_id,
+        pm.product_img_id,
+        pm.img_addr,
+        pm.img_desc,
+        pm.priority,
+        pm.create_time
+        from tb_product p
+        left join tb_product_img pm
+        on
+        p.product_id = pm.product_id
+        where
+        p.product_id = #{productId}
+        order by
+        pm.priority
+        DESC
+
+        <!--<if test="productCondition.shop != null-->
+        <!--and productCondition.shop != null">-->
+        <!--and shop_id = #{productCondition.shop.shopId }-->
+        <!--</if>-->
+        <!--product_id = {#productId}-->
+        <!--and shopId = {#{shop.shopId}}-->
+    </select>
+    <!--  Mybatis 配置文件 useGeneratedKeys 参数只针对 insert 语句生效，默认为 false。当设置为 true 时，表示如果插入的表以自增列为主键，则允许 JDBC 支持自动生成主键，并可将自动生成的主键返回。-->
+    <!--  修改商品信息的页面只需要下面if判断语句里面的信息-->
+    <update id="updateProduct" parameterType="com.imooc.o2o.entity.Product" keyProperty="product_id"
+            useGeneratedKeys="true">
+        update tb_product
+        <set>
+            <if test="productName !=null">product_name = #{productName},</if>
+            <if test="productDesc != null">product_desc = #{productDesc},</if>
+            <if test="imgAddr != null">img_addr=#{imgAddr},</if>
+            <if test="normalPrice != null">normal_price=#{normalPrice},</if>
+            <if test="promotionPrice != null">promotion_price=#{promotionPrice},</if>
+            <if test="priority != null">priority=#{priority},</if>
+            <if test="lastEditTime != null">last_edit_time=#{lastEditTime},</if>
+            <if test="enableStatus != null">enable_status=#{enableStatus},</if>
+            <if
+                    test="productCategory != null and productCategory.productCategoryId != null">
+                product_category_id=#{productCategory.productCategoryId}
+            </if>
+        </set>
+        where product_id = #{productId}
+        and shop_id = #{shop.shopId}
+    </update>
+    <select id="queryProductList" resultType="com.imooc.o2o.entity.Product">
+        select
+        product_id,
+        product_name,
+        product_desc,
+        img_addr,
+        normal_price,
+        promotion_price,
+        priority,
+        create_time,
+        last_edit_time,
+        enable_status,
+        point,
+        product_category_id,
+        shop_id
+        from tb_product
+        <where>
+
+            <if test="productCondition.shop !=null 
+               and productCondition.shop.shopId!= null">
+                and shop_id = #{productCondition.shop.shopId}
+            </if>
+
+            <if test="productCondition.productCategory!=null
+                      and  productCondition.productCategory.productCategoryId != null">
+                and product_category_id =
+                #{productCondition.productCategory.productCategoryId}
+
+            </if>
+            <if test="productCondition.productName!=null">
+                and product_name like '%${productCondition.productName}%'
+
+            </if>
+            <if test="productCondition.enableStatus!=null">
+                and enable_status = #{productCondition.enableStatus}
+            </if>
+        </where>
+        order by
+        priority desc
+        LIMIT #{rowIndex},#{pageSize};
+    </select>
+    <!--  select * from Customer limit 5,10;检索从第6行开始向前加10条数据，共显示id为6,7....15-->
+    <select id="queryProductCount" resultType="int">
+        select count(1) from tb_product
+        <where>
+            <if test="productCondition.shop != null
+                and productCondition.shop.shopId != null">
+                and shop_id = #{productCondition.shop.shopId}
+            </if>
+            <if test="productCondition.productCategory!=null">
+                and product_category_id =
+                #{productCondition.productCategory.productCategoryId}
+            </if>
+            <if test="productCondition.enableStatus!=null">
+                and enable_status = #{productCondition.enableStatus}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteProduct">
+		DELETE FROM
+		tb_product
+		WHERE
+		product_id = #{productId}
+		AND shop_id=#{shopId}
+	</delete>
 
 </mapper>

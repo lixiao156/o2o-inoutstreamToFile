@@ -45,7 +45,7 @@ public class ShopDaoTest extends BaseTest {
 
     }
     @Test
-    @Ignore
+
     public void updateShop() {
         Shop shop = new Shop();
         shop.setShopId(31L);
@@ -54,11 +54,10 @@ public class ShopDaoTest extends BaseTest {
         shop.setLastEditTime(new Date());
         int effectNum = shopDao.updateShop(shop);
         assertEquals(1,effectNum);
-
     }
 
     @Test
-    @Ignore
+
     public void queryByShopId(){
         long shopId = 31;
         Shop shop = shopDao.queryByShopId(shopId);

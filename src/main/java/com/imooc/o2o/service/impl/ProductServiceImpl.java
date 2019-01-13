@@ -1,6 +1,5 @@
 package com.imooc.o2o.service.impl;
 
-import ch.qos.logback.core.util.FileUtil;
 import com.imooc.o2o.dao.ProductDao;
 import com.imooc.o2o.dao.ProductImgDao;
 import com.imooc.o2o.dto.ImageHolder;
@@ -8,6 +7,7 @@ import com.imooc.o2o.dto.ProductExecution;
 import com.imooc.o2o.entity.Product;
 import com.imooc.o2o.entity.ProductImg;
 import com.imooc.o2o.enums.ProductStateEnum;
+import com.imooc.o2o.exceptions.ProductCategoryOperationException;
 import com.imooc.o2o.exceptions.ProductOperationException;
 import com.imooc.o2o.service.ProductService;
 import com.imooc.o2o.util.ImageUtil;
@@ -16,7 +16,6 @@ import com.imooc.o2o.util.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,8 +45,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public ProductExecution addProduct(Product product, ImageHolder thumbnail, List<ImageHolder> productImgHolderList)
-    {
+    public ProductExecution addProduct(Product product, ImageHolder thumbnail, List<ImageHolder> productImgHolderList) {
         //商品实例不为空 相关店铺不为空
         if (product != null && product.getShop() != null && product.getShop().getShopId() != null) {
             product.setCreateTime(new Date());
@@ -85,6 +83,8 @@ public class ProductServiceImpl implements ProductService {
             return new ProductExecution(ProductStateEnum.EMPTY);
         }
     }
+
+
     /**
      * 添加缩略图
      *
@@ -133,78 +133,103 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-//    @Override
-//    public Product getProductById(long productId) {
-//        return productDao.queryProductByProductId(productId);
-//    }
-//
-//    @Override
-//    @Transactional
-//    public ProductExecution modifyProduct(Product product, ImageHolder thumbnail,
-//                                          List<ImageHolder> productImgHolderList) throws ProductOperationException {
-//        // 1. 若缩略图参数有值，则处理缩略图
-//        // 2. 若原来存在缩略图则先删除再添加新的缩略图，之后获取缩略图相对路径并赋值给product
-//        // 3. 若商品详情图列表参数有值，对商品详情图片列表进行同样的操作
-//        // 4. 将tb_product_img下面的该商品原来的商品详情图记录全部清除
-//        // 5. 更新tb_product_img以及tb_product的信息
-//        if (product != null && product.getShop() != null && product.getShop().getShopId() != null) {
-//            // 给商品设置默认属性
-//            product.setLastEditTime(new Date());
-//            // 若商品缩略图不为空且原有缩略图不为空则删除原有缩略图并添加
-//            if (thumbnail != null) {
-//                // 先获取一遍原有的信息，因为原来的信息有原图片地址
-//                Product tempProduct = productDao.queryProductByProductId(product.getProductId());
-//                if (tempProduct.getImgAddr() != null) {
-//                    ImageUtil.deleteFileOrPath(tempProduct.getImgAddr());
-//                }
-//                addThumbnail(product, thumbnail);
-//            }
-//            // 如果有新存入的商品详情图，则先删除原来的，再添加新的
-//            if (productImgHolderList != null && productImgHolderList.size() > 0) {
-//                deleteProductImgList(product.getProductId());
-//                addProductImgList(product, productImgHolderList);
-//            }
-//            try {
-//                // 更新商品信息
-//                int effectedNum = productDao.updateProduct(product);
-//                if (effectedNum <= 0) {
-//                    throw new ProductOperationException("更新商品信息失败");
-//                }
-//                return new ProductExecution(ProductStateEnum.SUCCESS, product);
-//            } catch (Exception e) {
-//                throw new ProductOperationException("创建商品详情图片失败;" + e.toString());
-//            }
-//        } else {
-//            return new ProductExecution(ProductStateEnum.EMPTY);
-//        }
-//    }
-//
-//    /**
-//     * 删除某个商品下的所有详情图
-//     *
-//     * @param productId
-//     */
-//    private void deleteProductImgList(Long productId) {
-//        // 根据productId获取原来的图片
-//        List<ProductImg> productImgList = productImgDao.queryProductImgList(productId);
-//        // 删除原来的图片
-//        for (ProductImg productImg : productImgList) {
-//            ImageUtil.deleteFileOrPath(productImg.getImgAddr());
-//        }
-//        // 删除数据库里原有的图片的嘻嘻
-//        productImgDao.deleteProductImgByProductId(productId);
-//    }
-//
-//    @Override
-//    public ProductExecution getProductList(Product productCondition, int pageIndex, int pageSize) {
-//        // 页码转换成数据库的行，并调用dao层取回指定页码的商品列表
-//        int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
-//        List<Product> productList = productDao.queryProductList(productCondition, rowIndex, pageSize);
-//        // 基于同样的查询条件返回该查询条件下的商品总数
-//        int count = productDao.queryProductCount(productCondition);
-//        ProductExecution pe = new ProductExecution();
-//        pe.setProductList(productList);
-//        pe.setCount(count);
-//        return pe;
-//    }
+    /**
+     * 根据Id查询商品信息
+     *
+     * @param productId
+     * @return
+     */
+    @Override
+    public Product getProductById(long productId) {
+        return productDao.queryProductByProductId(productId);
+
+    }
+
+    /**
+     * 根据商品对象 图片信息 图片列表信息  对商品信息进行修改
+     *
+     * @param product
+     * @param thumbnail
+     * @param productImgHolderList
+     * @return
+     * @throws ProductOperationException
+     */
+
+    @Override
+    public ProductExecution modifyProduct(Product product, ImageHolder thumbnail, List<ImageHolder> productImgHolderList)
+            throws ProductOperationException {
+        //首先保证传入的对象不为空 才能对对象进行修改
+        if ((product != null && product.getShop() != null && product.getShop().getShopId() != null)) {
+            //修改时间这里指的是店铺的
+            product.setLastEditTime(new Date());
+            if (thumbnail != null) {
+                Product tempProduct = (Product) productDao.queryProductByProductId(product.getProductId());
+                //如果有原来是有图片需要更新？ 如果不需要更新的情况？
+                if (tempProduct.getImgAddr() != null) {
+                    //删除原来的图片 以及原来的目录结构
+                    ImageUtil.deletFileOrPath(tempProduct.getImgAddr());
+                }
+                addThumbnail(product, thumbnail);
+            }
+            //传入的参数中是有图片信息的  需要将新图片插入到相应的店铺中
+            //这里指的是商品
+            if (productImgHolderList != null && productImgHolderList.size() > 0) {
+                deleteProductImgList(product.getProductId());
+                addProductImgList(product, productImgHolderList);
+            }
+            //这里不用try catch 应该也是可以的
+            try{
+                int effectedNum = productDao.updateProduct(product);
+                if(effectedNum <=0){
+                    //终止程序？
+                    throw new ProductCategoryOperationException("更新商品信息失败");
+                }
+                return new ProductExecution(ProductStateEnum.SUCCESS,product);
+            }catch (Exception e){
+                //可以告诉我们是什么异常？但是在这里已经明确知道如果没有影响行数而抛异常？
+                //可以使用if()else ()来替换?
+                throw new ProductOperationException("创建商品信息失败");
+
+            }
+
+        }else {
+            //商品信息为空
+            return new ProductExecution(ProductStateEnum.EMPTY);
+        }
+    }
+
+    /**
+     * 查询商品信息 状态 及分页等
+     *
+     * @param productCondition
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ProductExecution getProductList(Product productCondition, int pageIndex, int pageSize) {
+        int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
+        List<Product> productList = productDao.queryProductList(productCondition, rowIndex, pageSize);
+        int count = productDao.queryProductCount(productCondition);
+        //ProductExecution对象保存了商品的其他很多信息
+        ProductExecution pe = new ProductExecution();
+        pe.setProductList(productList);
+        pe.setCount(count);
+        return pe;
+    }
+
+    /**
+     * 删除某个商品的所有详情图
+     *
+     * @param productId
+     */
+    private void deleteProductImgList(Long productId) {
+        //根据productId获取原来的图片
+        List<ProductImg> productImgList = productImgDao.queryProductImgList(productId);
+        for (ProductImg productImg : productImgList) {
+            ImageUtil.deletFileOrPath(productImg.getImgAddr());
+        }
+        productImgDao.deleteProductImgByProductId(productId);
+    }
+
 }

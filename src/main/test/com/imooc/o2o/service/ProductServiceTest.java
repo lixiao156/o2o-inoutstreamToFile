@@ -1,6 +1,7 @@
 package com.imooc.o2o.service;
 
 import com.imooc.o2o.BaseTest;
+import com.imooc.o2o.dao.ProductDao;
 import com.imooc.o2o.dto.ImageHolder;
 import com.imooc.o2o.dto.ProductExecution;
 import com.imooc.o2o.entity.Product;
@@ -24,6 +25,8 @@ import static org.junit.Assert.*;
 public class ProductServiceTest extends BaseTest {
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ProductDao productDao;
 
     @Test
     public void addProduct() {
@@ -79,4 +82,20 @@ public class ProductServiceTest extends BaseTest {
 
         assertEquals(ProductStateEnum.SUCCESS.getState(), pe.getState());
     }
+
+    @Test
+    public void getProductList() {
+        Product product = new Product();
+        product.setProductId(18L);
+        product = productDao.queryProductByProductId(20L);
+        System.out.println(product.toString());
+        Shop shop = new Shop();
+        shop.setShopId(31L);
+        product.setShop(shop);
+    }
+
+    @Test
+    public void getProductList1() {
+    }
+
 }

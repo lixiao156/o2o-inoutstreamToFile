@@ -45,9 +45,21 @@ public class ProductCategoryManagementController {
 //            ProductCategoryStateEnum ps = ProductCategoryStateEnum.INNER_ERROR;
 //            return new Result<List<ProductCategory>>(false, ps.getState(), ps.getStateInfo());
 //        }
-        Long shopId = (Long) request.getAttribute("shopId");
-        List<ProductCategory> list = productCategoryService.getProductCategoryList(shopId);
-        if (shopId != null && shopId > 0) {
+////        Long shopId = (Long) request.getAttribute("shopId");
+////        List<ProductCategory> list = productCategoryService.getProductCategoryList(shopId);
+////        if (shopId != null && shopId > 0) {
+////            return new Result<List<ProductCategory>>(true, list);
+////        } else {
+////            ProductCategoryStateEnum ps = ProductCategoryStateEnum.INNER_ERROR;
+////            return new Result<List<ProductCategory>>(false, ps.getState(), ps.getStateInfo());
+////        }
+        /**
+         * 用户从店铺进来进入店铺时候店铺逻辑中已经生产了shopId的session
+         */
+        Shop currentShop = (Shop) request.getSession().getAttribute("currentShop");
+        List<ProductCategory> list = null;
+        if (currentShop != null && currentShop.getShopId() > 0) {
+            list = productCategoryService.getProductCategoryList(currentShop.getShopId());
             return new Result<List<ProductCategory>>(true, list);
         } else {
             ProductCategoryStateEnum ps = ProductCategoryStateEnum.INNER_ERROR;

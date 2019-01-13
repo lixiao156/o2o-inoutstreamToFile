@@ -39,9 +39,9 @@ $(function() {
 		$('.shop-wrap').html(html);
 	}
 
-	function goShop(status, id) {
+	function goShop(status, shopId) {
 		if (status != 0 && status != -1) {
-			return '<a href="/o2o/shopadmin/shopmanagement?shopId=' + id
+			return '<a href="/o2o/shopadmin/shopmanagement?shopId=' + shopId
 					+ '">进入</a>';
 		} else {
 			return '';

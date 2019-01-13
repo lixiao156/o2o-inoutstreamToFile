@@ -34,7 +34,7 @@
             </if>
         </where>
         Order by
-        Priority DESC
+        priority DESC
 
 
     </select>

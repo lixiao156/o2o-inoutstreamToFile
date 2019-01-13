@@ -5,7 +5,6 @@ import com.imooc.o2o.dto.ProductExecution;
 import com.imooc.o2o.entity.Product;
 import com.imooc.o2o.exceptions.ProductOperationException;
 
-import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -26,4 +25,38 @@ public interface ProductService {
 
     ProductExecution addProduct(Product product, ImageHolder thumbnail, List<ImageHolder> productImageHolderList
     ) throws ProductOperationException;
+
+
+
+
+
+    /**
+     * 通过商品id查询唯一的商品信息
+     *
+     * @param productId
+     * @return
+     */
+    Product getProductById(long productId);
+
+
+    /**
+     * 需要传入那些信息 参数 返回值 ？？？？？？
+     * 更新商品的信息
+     * @param product
+     * @param thumbnail
+     * @param productImgHolderList
+     * @return
+     */
+    ProductExecution modifyProduct(Product product,ImageHolder thumbnail,List<ImageHolder> productImgHolderList)
+    throws ProductOperationException;
+
+    /**
+     * 查询商品的列表并分页，可以输入的条件有，商品名称（模糊），店铺的id,商品的类别
+     * @param productCondition
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     */
+    ProductExecution getProductList (Product productCondition , int pageIndex , int pageSize);
+
 }

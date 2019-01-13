@@ -8,24 +8,50 @@
       list和productCategory随意命名的 以productCategory为变量 遍历list
       中所有的元素  index为计数器  separator：sql中的分隔符-->
     <insert id="bathInsertProductImg" parameterType="java.util.List">
-            <selectKey resultType="Long" keyProperty="product_img_id"
-                       order="AFTER">
-                SELECT LAST_INSERT_ID()
-            </selectKey>
-            INSERT INTO
-            tb_product_img(img_addr,img_desc,priority,
-            create_time,product_id)
-            VALUES
-            <foreach collection="list" item="productImg" index="index"
-                     separator=",">
-                (
-                #{productImg.imgAddr},
-                #{productImg.imgDesc},
-                #{productImg.priority},
-                #{productImg.createTime},
-                #{productImg.productId}
-                )
-            </foreach>
+        <!--<selectKey resultType="Long" keyProperty="product_img_id"-->
+        <!--order="AFTER">-->
+        <!--SELECT LAST_INSERT_ID()-->
+        <!--</selectKey>-->
+        INSERT INTO
+        tb_product_img(img_addr,img_desc,priority,
+        create_time,product_id)
+        VALUES
+        <foreach collection="list" item="productImg" index="index"
+                 separator=",">
+            (
+            #{productImg.imgAddr},
+            #{productImg.imgDesc},
+            #{productImg.priority},
+            #{productImg.createTime},
+            #{productImg.productId}
+            )
+        </foreach>
     </insert>
+
+
+    <delete id="deleteProductImgByProductId" parameterType="Long">
+		DELETE FROM
+		tb_product_img
+		WHERE
+		product_id =
+		#{productId}
+	</delete>
+    <!--  多表查询 两个表的名称和重复字段问题-->
+    <select id="queryProductImgList" resultType="com.imooc.o2o.entity.ProductImg">
+    select
+    product_img_id,
+    img_addr,
+    img_desc,
+    priority,
+    create_time,
+    product_id/* 所属商品的id也进行查询*/
+
+    from
+    tb_product_img
+    where
+    product_id = #{productId}
+    order by
+    product_img_id asc
+    </select>
 
 </mapper>

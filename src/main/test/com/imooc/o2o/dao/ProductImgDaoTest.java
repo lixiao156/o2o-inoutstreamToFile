@@ -50,4 +50,17 @@ public class ProductImgDaoTest extends BaseTest {
 
 
 
+    @Test
+    public void queryProductImgList() {
+        List<ProductImg> productImgList = productImgDao.queryProductImgList(38L);
+        for (ProductImg p:productImgList
+             ) {
+            System.out.println(p);
+        }
+    }
+
+    @Test
+    public void deleteProductImgByProductId() {
+
+    }
 }

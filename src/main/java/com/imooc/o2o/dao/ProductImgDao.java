@@ -15,4 +15,28 @@ public interface ProductImgDao {
      * @return
      */
     int bathInsertProductImg(List<ProductImg> productImgList);
+
+    /**
+     * 删除指定商品的所有详情图 与之前删除店铺的缩略图是不一样的
+     * @param productId
+     * @return
+     */
+
+
+
+    /**
+     * 根据商品的id获取商品的详情图
+     * @param productId
+     * @return
+     */
+    List<ProductImg> queryProductImgList(long productId);
+
+    /**
+     * 删除图片
+     * @param productId
+     * @return
+     */
+    int deleteProductImgByProductId(long productId);
+
+
 }

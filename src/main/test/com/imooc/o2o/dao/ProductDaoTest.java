@@ -1,15 +1,16 @@
 package com.imooc.o2o.dao;
 
 import com.imooc.o2o.BaseTest;
-import com.imooc.o2o.entity.Product;
-import com.imooc.o2o.entity.ProductCategory;
-import com.imooc.o2o.entity.Shop;
+import com.imooc.o2o.entity.*;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -20,8 +21,11 @@ import static org.junit.Assert.*;
 public class ProductDaoTest extends BaseTest {
     @Autowired
     private ProductDao productDao;
+    @Autowired
+    private ProductImgDao productImgDao;
 
     @Test
+    @Ignore
     public void testAInsertProduct() {
         Shop shop1 = new Shop();
         shop1.setShopId(31L);
@@ -69,5 +73,102 @@ public class ProductDaoTest extends BaseTest {
         assertEquals(1, effectedNum);
         effectedNum = productDao.insertProduct(product3);
         assertEquals(1, effectedNum);
+    }
+
+    /**
+     * 根据商品的id获取图片详情列表
+     */
+    @Test
+    public void queryProductByProductId() {
+        long productId = 20L;
+        //图片
+        ProductImg productImg = new ProductImg();
+        //日期
+        productImg.setCreateTime(new Date());
+        productImg.setImgDesc("测试图片描述");
+        productImg.setImgAddr("图片地址");
+        productImg.setPriority(1);
+        //属于哪件商品
+        productImg.setProductId(productId);
+        ProductImg productImg2 = new ProductImg();
+        productImg2.setImgAddr("图片2");
+        productImg.setImgDesc("测试图片2");
+        productImg2.setPriority(1);
+        productImg2.setCreateTime(new Date());
+        productImg2.setProductId(productId);
+        List<ProductImg> productImgList = new ArrayList<>();
+        productImgList.add(productImg);
+        productImgList.add(productImg2);
+        int effecNum = productImgDao.bathInsertProductImg(productImgList);
+        assertEquals(2, effecNum);
+        Product product = productDao.queryProductByProductId(productId);
+       // assertEquals(38, product.getProductImgList().size());
+        effecNum = productImgDao.deleteProductImgByProductId(productId);
+     //   assertEquals(2, effecNum);
+
+    }
+
+
+    @Test
+    public void updateProduct() {
+        Shop shop = new Shop();
+        shop.setShopId(31L);
+        Product product = new Product();
+        //由内到外
+        product.setProductId(20L);
+        product.setProductName("第一个产品");
+        product.setShop(shop);
+        int effectedNum = productDao.updateProduct(product);
+        assertEquals(1, effectedNum);
+
+    }
+
+    @Test
+    public void queryProductList() {
+        //这商品对象是为空
+        Product product = new Product();
+        if(product == null){
+            System.out.println("product为null");
+        }else {
+            System.out.println("product引用对象不为空");
+        }
+        //优先级排序后分页
+        List<Product> productList = productDao.queryProductList(product, 0, 999);
+        for (Product p : productList
+        ) {
+            System.out.println(p.toString());
+        }
+       // assertEquals(3, productList.size());
+        //统计数据的条数
+        int count = productDao.queryProductCount(product);
+       // assertEquals(17, count);
+        //更改相关数据的信息 这里只是传递参数进去 具体的逻辑是 mapper xml里面的SQL语句
+        product.setProductName("测试");
+        productList = productDao.queryProductList(product, 0, 3);
+      //  assertEquals(3, productList.size());
+        //
+        count = productDao.queryProductCount(product);
+    //    assertEquals(17, count);
+        Shop shop = new Shop();
+        //mapper 里面的sql设计了为null的数据不输入不替换
+        shop.setShopId(32L);
+        //商品与商店相关联   需要看之前是否将商品分类关联好 以及商品Id已经确认
+        product.setShop(shop);
+        productList = productDao.queryProductList(product, 0, 3);
+     //   assertEquals(1, productList.size());
+        count = productDao.queryProductCount(product);
+    //    assertEquals(1, count);
+
+    }
+
+    @Test
+    public void deleteProduct() {
+        int effectedNum = productDao.deleteProduct(18, 31);
+        assertEquals(1, effectedNum);
+    }
+
+    @Test
+    public void queryProductCount() {
+
     }
 }

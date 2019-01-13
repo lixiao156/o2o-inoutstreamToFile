@@ -1,5 +1,8 @@
 package com.imooc.o2o.entity;
 
+import org.apache.ibatis.type.Alias;
+import sun.awt.SunHints;
+
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +12,10 @@ import java.util.List;
  * @date created in 19:04 2018/12/30
  */
 public class Product {
+    /**
+     * 一共十三个字段  本类的字段11
+     * 其他类的对象2：商店类及商品分类的类  具体的商品与这两个类是依赖关系
+     */
     private Long productId;
     private String productName;
     /**
@@ -50,6 +57,9 @@ public class Product {
      * 记录商品属于哪家店铺
      */
     private Shop shop;
+
+
+
 
     public Long getProductId() {
         return productId;
@@ -153,5 +163,25 @@ public class Product {
 
     public void setShop(Shop shop) {
         this.shop = shop;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productId=" + productId +
+                ", productName='" + productName + '\'' +
+                ", productDesc='" + productDesc + '\'' +
+                ", imgAddr='" + imgAddr + '\'' +
+                ", normalPrice='" + normalPrice + '\'' +
+                ", promotionPrice='" + promotionPrice + '\'' +
+                ", priority=" + priority +
+                ", createTime=" + createTime +
+                ", lastEditTime=" + lastEditTime +
+                ", enableStatus=" + enableStatus +
+                ", productImgList=" + productImgList +
+                ", productCategory=" + productCategory +
+                ", shop=" + shop +
+                '}';
     }
 }

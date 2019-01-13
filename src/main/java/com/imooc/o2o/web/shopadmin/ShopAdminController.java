@@ -41,18 +41,36 @@ public class ShopAdminController {
      * @return
      */
     @RequestMapping(value = "/shopmanagement")
-    public String shopManagement(HttpServletRequest request, @RequestParam("shopId")Long shopId) {
-        request.setAttribute("shopId",shopId);
+    public String shopManagement(HttpServletRequest request, @RequestParam("shopId") Long shopId) {
+        request.setAttribute("shopId", shopId);
         return "shop/shopmanagement";
     }
 
     /**
+     * 商品分类页面
+     * @return
+     */
+    @RequestMapping(value = "/productcategorymanagement", method = RequestMethod.GET)
+    public String productCategoryManagement() {
+        return "shop/productcategorymanagement";
+    }
+
+    /**
+     * 商品管理页面
+     * @return
+     */
+    @RequestMapping(value = "/productmanagement", method = RequestMethod.GET)
+    public String productManagement() {
+        return "shop/productmanagement";
+    }
+    /**
+     * 转发至商品添加/编辑页面
      *
      * @return
      */
-    @RequestMapping(value = "/productcategorymanagement",method = RequestMethod.GET)
-    public String productCategoryManagement() {
-        return "shop/productcategorymanagement";
+    @RequestMapping(value = "/productoperation")
+    public String productOperation() {
+        return "shop/productoperation";
     }
 
 
