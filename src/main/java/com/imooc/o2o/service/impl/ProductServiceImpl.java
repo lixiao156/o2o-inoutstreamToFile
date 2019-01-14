@@ -135,6 +135,7 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 根据Id查询商品信息
+     * 通过dao层去获取商品信息
      *
      * @param productId
      * @return
@@ -154,45 +155,54 @@ public class ProductServiceImpl implements ProductService {
      * @return
      * @throws ProductOperationException
      */
-
+    //原来的缩略图是一定有值得
+    //1.若缩略图参数是有值得，处理缩略图 若原来有图先删除  在获取新的缩略图的地址 将新图加入
+    //2.若商品的详情图类别存在同样需要将图进行缩略图一样的操作处理tb_product_img
+    //3.更新tb_product的信息
     @Override
+    @Transactional
     public ProductExecution modifyProduct(Product product, ImageHolder thumbnail, List<ImageHolder> productImgHolderList)
             throws ProductOperationException {
         //首先保证传入的对象不为空 才能对对象进行修改
         if ((product != null && product.getShop() != null && product.getShop().getShopId() != null)) {
             //修改时间这里指的是店铺的
             product.setLastEditTime(new Date());
+            //判断原来商店的缩略图是不是有值得？？？ 应该是判断传入的参数存在图片是不是需要改变原来的图片
             if (thumbnail != null) {
+                //获取原来商店中商品的信息 需要回去商品详情图的地址
                 Product tempProduct = (Product) productDao.queryProductByProductId(product.getProductId());
                 //如果有原来是有图片需要更新？ 如果不需要更新的情况？
                 if (tempProduct.getImgAddr() != null) {
                     //删除原来的图片 以及原来的目录结构
                     ImageUtil.deletFileOrPath(tempProduct.getImgAddr());
                 }
+                //添加图片
                 addThumbnail(product, thumbnail);
             }
             //传入的参数中是有图片信息的  需要将新图片插入到相应的店铺中
             //这里指的是商品
             if (productImgHolderList != null && productImgHolderList.size() > 0) {
+                //传入的列表是有值得就需要将原来的删除
                 deleteProductImgList(product.getProductId());
                 addProductImgList(product, productImgHolderList);
             }
             //这里不用try catch 应该也是可以的
-            try{
+            try {
+                //更新商品的信息
                 int effectedNum = productDao.updateProduct(product);
-                if(effectedNum <=0){
+                if (effectedNum <= 0) {
                     //终止程序？
                     throw new ProductCategoryOperationException("更新商品信息失败");
                 }
-                return new ProductExecution(ProductStateEnum.SUCCESS,product);
-            }catch (Exception e){
+                return new ProductExecution(ProductStateEnum.SUCCESS, product);
+            } catch (Exception e) {
                 //可以告诉我们是什么异常？但是在这里已经明确知道如果没有影响行数而抛异常？
                 //可以使用if()else ()来替换?
                 throw new ProductOperationException("创建商品信息失败");
 
             }
 
-        }else {
+        } else {
             //商品信息为空
             return new ProductExecution(ProductStateEnum.EMPTY);
         }
@@ -224,11 +234,13 @@ public class ProductServiceImpl implements ProductService {
      * @param productId
      */
     private void deleteProductImgList(Long productId) {
-        //根据productId获取原来的图片
+        //根据productId获取原来的图片列表
         List<ProductImg> productImgList = productImgDao.queryProductImgList(productId);
+        //依次遍历商品的详情列表依次删除  Dao层删除直接根据productId在SQL语句中实现删除不用遍历
         for (ProductImg productImg : productImgList) {
             ImageUtil.deletFileOrPath(productImg.getImgAddr());
         }
+        //再从数据库中删除原来的图片的引用信息SQL语句一次性删除
         productImgDao.deleteProductImgByProductId(productId);
     }
 

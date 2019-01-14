@@ -174,6 +174,7 @@ public class ImageUtil {
             if(fileOrPath.isDirectory()){
                 File files[] = fileOrPath.listFiles();
                 for(int i = 0;i < files.length;i++){
+                    //delete()方法是已经封装好的直接调用
                     files[i].delete();
                 }
             }

@@ -28,8 +28,6 @@ public interface ProductService {
 
 
 
-
-
     /**
      * 通过商品id查询唯一的商品信息
      *
@@ -40,11 +38,10 @@ public interface ProductService {
 
 
     /**
-     * 需要传入那些信息 参数 返回值 ？？？？？？
-     * 更新商品的信息
-     * @param product
-     * @param thumbnail
-     * @param productImgHolderList
+     * 更新商品的信息 和 添加商品传入的参数 是一样的
+     * @param product 商品对象
+     * @param thumbnail 文件流 和 商品缩略图
+     * @param productImgHolderList 商品详情图列表及文件流列表
      * @return
      */
     ProductExecution modifyProduct(Product product,ImageHolder thumbnail,List<ImageHolder> productImgHolderList)

@@ -22,7 +22,7 @@ public class CodeUtil {
 
         //看实际代码是不是为空 或者二者不相等
         if ( verifyCodeActual.toUpperCase() == null || ! verifyCodeActual.toUpperCase().equals(verifyCodeExpected)){
-            return false;
+                return false;
         }
         return true;
         //将工具类引入到店铺注册里面去

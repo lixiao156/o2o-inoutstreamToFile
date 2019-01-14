@@ -29,13 +29,13 @@ public class ProductImgDaoTest extends BaseTest {
         productImg1.setImgDesc("测试图片1");
         productImg1.setPriority(1);
         productImg1.setCreateTime(new Date());
-        productImg1.setProductId(18l);
+        productImg1.setProductId(20l);
         ProductImg productImg2 = new ProductImg();
         productImg2.setImgAddr("图片2");
         productImg1.setImgDesc("测试图片2");
         productImg2.setPriority(1);
         productImg2.setCreateTime(new Date());
-        productImg2.setProductId(18l);
+        productImg2.setProductId(20l);
         List<ProductImg> productImgList = new ArrayList<ProductImg>();
         productImgList.add(productImg1);
         productImgList.add(productImg2);
@@ -59,8 +59,14 @@ public class ProductImgDaoTest extends BaseTest {
         }
     }
 
+    /**
+     * 如果需要 更新商品的图片需要先删除原来图片
+     * 删除后再添加新的图片
+     */
     @Test
     public void deleteProductImgByProductId() {
+        int i = productImgDao.deleteProductImgByProductId(38);
+        System.out.println(i);
 
     }
 }
