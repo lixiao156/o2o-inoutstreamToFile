@@ -99,7 +99,9 @@ public class ShopDaoTest extends BaseTest {
         System.out.println("店铺的列表大小：" + shopList.size());
         System.out.println("店铺的总数" + count);
         ShopCategory shopCategory = new ShopCategory();
-        shopCategory.setShopCategoryId(31L);
+        shopCategory.setShopCategoryId(1L);
+        System.out.println();
+        //查询属于指定类别的店铺
         shopCondition.setShopCategory(shopCategory);
         shopList = shopDao.queryShopList(shopCondition, 0, 2);
         System.out.println("店铺列表的大小" + shopList.size());
