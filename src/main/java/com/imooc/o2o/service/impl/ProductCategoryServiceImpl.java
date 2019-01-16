@@ -2,7 +2,7 @@ package com.imooc.o2o.service.impl;
 
 import com.imooc.o2o.dao.ProductCategoryDao;
 import com.imooc.o2o.entity.ProductCategory;
-import com.imooc.o2o.enums.ProductCategoryExecution;
+import com.imooc.o2o.dto.ProductCategoryExecution;
 import com.imooc.o2o.enums.ProductCategoryStateEnum;
 import com.imooc.o2o.exceptions.ProductCategoryOperationException;
 import com.imooc.o2o.service.ProductCategoryService;

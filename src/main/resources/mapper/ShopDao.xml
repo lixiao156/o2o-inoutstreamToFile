@@ -122,22 +122,32 @@
         tb_area a,
         tb_shop_category sc
         <where>
+            /* 根据商店的分类查询所有的商店*/
             <if
-                    test="shopCondition.shopCategory != null and shopCondition.shopCategory.shopCategoryId != null">
+                    test="shopCondition.shopCategory != null and
+                    shopCondition.shopCategory.shopCategoryId != null">
                 AND
                 s.shop_category_id=#{shopCondition.shopCategory.shopCategoryId}
             </if>
+            /**/
             <if
-                    test="shopCondition.shopCategory != null and shopCondition.shopCategory.parent != null and shopCondition.shopCategory.parent.shopCategoryId != null">
+                    test="shopCondition.shopCategory != null and
+                    shopCondition.shopCategory.parent != null and
+                    shopCondition.shopCategory.parent.shopCategoryId != null">
                 AND
+                /*联系另外一张表查询相对应的信息*/
+                /*查询所有的二级目录分类Id*/
                 s.shop_category_id in
                 (select shop_category_id from
                 tb_shop_category
                 WHERE
+                /*根据商店分类的二级目录的父类即上一级目录的分类Id查询二级分类目录下的分类Id*/
+                /*  即查询的是某个一级分类下所有的店铺*/
                 parent_id=#{shopCondition.shopCategory.parent.shopCategoryId})
             </if>
             <if
-                    test="shopCondition.area != null and shopCondition.area.areaId != null">
+                    test="shopCondition.area != null and
+                    shopCondition.area.areaId != null">
                 AND
                 s.area_id=#{shopCondition.area.areaId}
             </if>
@@ -150,7 +160,8 @@
                 s.enable_status=#{shopCondition.enableStatus}
             </if>
             <if
-                    test="shopCondition.owner != null and shopCondition.owner.userId != null">
+                    test="shopCondition.owner != null
+                    and shopCondition.owner.userId != null">
                 AND
                 s.owner_id=#{shopCondition.owner.userId}
             </if>
@@ -165,7 +176,7 @@
         <!--  分页条件-->
         LIMIT #{rowIndex},#{pageSize}
     </select>
-<!--  统计每个商户下的店铺总数-->
+    <!--  统计每个商户下的店铺总数-->
     <select id="queryShopCount" resultType="int">
         SELECT
         count(1)

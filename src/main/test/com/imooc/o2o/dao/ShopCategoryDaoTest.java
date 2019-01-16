@@ -15,27 +15,32 @@ public class ShopCategoryDaoTest extends BaseTest {
 
     @Test
     public void queryShopCategory() {
+        //查询parentId = null一共多少条
+        List<ShopCategory> shopCategoryDaoList = shopCategoryDao.queryShopCategory(null);
+        System.out.println(shopCategoryDaoList.size());
 
-
-        List<ShopCategory> shopCategoryList = shopCategoryDao.queryShopCategory(new ShopCategory());
-       // assertEquals(3, shopCategoryList.size());
-        ShopCategory childShopCategory = new ShopCategory();
-        ShopCategory parentShopCategory = new ShopCategory();
-        parentShopCategory.setShopCategoryId(1L);
-        //将parentShopCategory对象使用set方法传入到childShopCategory对象中
-        childShopCategory.setParent(parentShopCategory);
-        System.out.println(childShopCategory);
-        System.out.println(parentShopCategory == childShopCategory);
-
-        List<ShopCategory> shopCategoryList2 = shopCategoryDao.queryShopCategory(childShopCategory);
-        assertEquals(1, shopCategoryList2.size());
-
-        System.out.println(shopCategoryList2.get(0).getShopCategoryName());
+//        List<ShopCategory> shopCategoryList = shopCategoryDao.queryShopCategory(new ShopCategory());
+//       // assertEquals(3, shopCategoryList.size());
+//        ShopCategory childShopCategory = new ShopCategory();
+//        ShopCategory parentShopCategory = new ShopCategory();
+//        parentShopCategory.setShopCategoryId(1L);
+//        //将parentShopCategory对象使用set方法传入到childShopCategory对象中
+//        childShopCategory.setParent(parentShopCategory);
+//        System.out.println(childShopCategory);
+//        System.out.println(parentShopCategory == childShopCategory);
 //
-//        for (int i = 0; i < shopCategoryList.size(); i++) {
-//            ShopCategory shopCategory1 = shopCategoryList.get(i);
-//            System.out.println(shopCategory1.getShopCategoryName());
-//        }
+//        List<ShopCategory> shopCategoryList2 = shopCategoryDao.queryShopCategory(childShopCategory);
+//        assertEquals(1, shopCategoryList2.size());
+//
+//        System.out.println(shopCategoryList2.get(0).getShopCategoryName());
+////
+////        for (int i = 0; i < shopCategoryList.size(); i++) {
+////            ShopCategory shopCategory1 = shopCategoryList.get(i);
+////            System.out.println(shopCategory1.getShopCategoryName());
+////        }
+//
+//    }
+
 
     }
 }

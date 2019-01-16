@@ -10,5 +10,13 @@ import java.util.List;
  * @date created in 9:59 2019/1/5
  */
 public interface ShopCategoryService {
-    List<ShopCategory> getShopCategoryList(ShopCategory shopCategoryCondition);
+    /**
+     * 根据查询列表获取shopCategory列表
+     * @param shopCategoryCondition
+     * @return
+     */
+
+ List<ShopCategory> getShopCategoryList(ShopCategory shopCategoryCondition);
+
 }
+

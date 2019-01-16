@@ -2,6 +2,7 @@ package com.imooc.o2o.dao;
 
 import com.imooc.o2o.BaseTest;
 import com.imooc.o2o.entity.ProductCategory;
+import com.imooc.o2o.entity.ShopCategory;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -66,4 +67,6 @@ public class ProductCategoryDaoTest extends BaseTest {
             }
         }
     }
+
+
 }

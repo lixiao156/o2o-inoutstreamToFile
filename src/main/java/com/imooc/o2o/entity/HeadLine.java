@@ -11,7 +11,11 @@ import java.util.Date;
 public class HeadLine {
     private Long LineId;
     private String lineName;
+
     private String linrLink;
+    /**
+     * 首页的图片链接
+     */
     private String lineImg;
     /**
      * 展示的优先级

@@ -10,9 +10,7 @@ import java.util.List;
  * @date created in 22:06 2019/1/8
  */
 
-/**
- * 插入商品  参数商品
- */
+
 public interface ProductDao {
     /**
      * 插入商品

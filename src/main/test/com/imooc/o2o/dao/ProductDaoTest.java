@@ -102,9 +102,9 @@ public class ProductDaoTest extends BaseTest {
         int effecNum = productImgDao.bathInsertProductImg(productImgList);
         assertEquals(2, effecNum);
         Product product = productDao.queryProductByProductId(productId);
-       // assertEquals(38, product.getProductImgList().size());
+        // assertEquals(38, product.getProductImgList().size());
         effecNum = productImgDao.deleteProductImgByProductId(productId);
-     //   assertEquals(2, effecNum);
+        //   assertEquals(2, effecNum);
 
     }
 
@@ -127,9 +127,9 @@ public class ProductDaoTest extends BaseTest {
     public void queryProductList() {
         //这商品对象是为空
         Product product = new Product();
-        if(product == null){
+        if (product == null) {
             System.out.println("product为null");
-        }else {
+        } else {
             System.out.println("product引用对象不为空");
         }
         //优先级排序后分页
@@ -138,26 +138,26 @@ public class ProductDaoTest extends BaseTest {
         ) {
             System.out.println(p.toString());
         }
-       // assertEquals(3, productList.size());
+        // assertEquals(3, productList.size());
         //统计数据的条数
         int count = productDao.queryProductCount(product);
-       // assertEquals(17, count);
+        // assertEquals(17, count);
         //更改相关数据的信息 这里只是传递参数进去 具体的逻辑是 mapper xml里面的SQL语句
         product.setProductName("测试");
         productList = productDao.queryProductList(product, 0, 3);
-      //  assertEquals(3, productList.size());
+        //  assertEquals(3, productList.size());
         //
         count = productDao.queryProductCount(product);
-    //    assertEquals(17, count);
+        //    assertEquals(17, count);
         Shop shop = new Shop();
         //mapper 里面的sql设计了为null的数据不输入不替换
         shop.setShopId(32L);
         //商品与商店相关联   需要看之前是否将商品分类关联好 以及商品Id已经确认
         product.setShop(shop);
         productList = productDao.queryProductList(product, 0, 3);
-     //   assertEquals(1, productList.size());
+        //   assertEquals(1, productList.size());
         count = productDao.queryProductCount(product);
-    //    assertEquals(1, count);
+        //    assertEquals(1, count);
 
     }
 
@@ -169,6 +169,29 @@ public class ProductDaoTest extends BaseTest {
 
     @Test
     public void queryProductCount() {
+
+    }
+
+    /**
+     *  Preparing: update tb_product set product_category_id = null where product_category_id = ?
+     * 根据数据库的意思就是将  商品表中的所有商品分类为 ？ 的值全部替换为null
+     * 如果店铺不一样会不会出现问题   会不会操作到其他店铺 的相同的分类 Id
+     */
+    @Test
+    public void updateProductCategoryToNull() {
+        //能运行可以对数据库进行操作
+//        Product product = new Product();
+//        ProductCategory productCategory = new ProductCategory();
+//        productCategory.setProductCategoryId(24L);
+//        productCategory.setShopId(31L);
+//        product.setProductCategory(productCategory);
+//        Long id = product.getProductCategory().getProductCategoryId();
+//        int i = productDao.updateProductCategoryToNull(id);
+
+
+        //下面的方式也能够达到相同的效果
+        int effectNUm = productDao.updateProductCategoryToNull(24);
+        System.out.println(effectNUm);
 
     }
 }

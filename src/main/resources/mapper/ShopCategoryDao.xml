@@ -19,6 +19,11 @@
         <!--  需要将店铺分类放在parent_id不为空的目录之下 （莫非是不能让店铺放在一级目录下）-->
         <!--  为此需对mapper改造其语句来判断parent_id是否为空-->
         <where>
+
+            <if test="shopCategoryCondition == null">
+                and parent_id is null
+
+            </if>
             <!--  如果shopCategoryCondtion参数不为空那么就选出parent_id 不为空的条件-->
             <!--  如果shopCategoryCondtion 为空 就将所有的分类都选出来-->
 
@@ -28,14 +33,14 @@
         </where>
 
         <where>
+            <!--  shopCategoryCondition.parent可能出现空指针所以加上shopCategoryCondition != null-->
             <!--  ShopCategory类里面有一个parent对象 查询特定的ShopCategory id下面的子ShopCategory id-->
-            <if test="shopCategoryCondition.parent != null">
+            <if test="shopCategoryCondition != null and shopCategoryCondition.parent != null">
                 and parent_id = #{shopCategoryCondition.parent.shopCategoryId}
             </if>
         </where>
         Order by
         priority DESC
-
 
     </select>
 

@@ -1,11 +1,14 @@
 package com.imooc.o2o.service.impl;
 
+import com.imooc.o2o.dao.ProductCategoryDao;
 import com.imooc.o2o.dao.ProductDao;
 import com.imooc.o2o.dao.ProductImgDao;
 import com.imooc.o2o.dto.ImageHolder;
 import com.imooc.o2o.dto.ProductExecution;
 import com.imooc.o2o.entity.Product;
 import com.imooc.o2o.entity.ProductImg;
+import com.imooc.o2o.dto.ProductCategoryExecution;
+import com.imooc.o2o.enums.ProductCategoryStateEnum;
 import com.imooc.o2o.enums.ProductStateEnum;
 import com.imooc.o2o.exceptions.ProductCategoryOperationException;
 import com.imooc.o2o.exceptions.ProductOperationException;
@@ -31,6 +34,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
     @Autowired
     private ProductImgDao productImgDao;
+    @Autowired
+    private ProductCategoryDao productCategoryDao;
 
     /**
      * 1.处理缩略图，获取缩略图相对路径你，并赋值给product
@@ -244,4 +249,33 @@ public class ProductServiceImpl implements ProductService {
         productImgDao.deleteProductImgByProductId(productId);
     }
 
+    /**
+     * 传入商店的id与 商品分类的id 保证不影响其他的商店
+     * 直接就将异常抛出了 就不会出现try catch    ???
+     *
+     * @param productCategoryId
+     * @param shopId
+     * @return
+     */
+    @Override
+    public ProductCategoryExecution deleteProductCategory(long productCategoryId, long shopId) throws ProductOperationException {
+        /**
+         * 这个dao是
+         * 先解除tb_product里商品与给商品的productCategoryId之间的关联
+         */
+        int effectedNum = productDao.updateProductCategoryToNull(productCategoryId);
+        if (effectedNum < 0) {
+            throw new RuntimeException("商品更新失败");
+        }
+        /**
+         * 这个dao删除分类信息
+         * 删除productCategoryId
+         */
+        int effectedNum1 = productCategoryDao.deleteProductCategory(productCategoryId, shopId);
+        if (effectedNum1 < 0) {
+            throw new RuntimeException("商品类别删除失败");
+        } else {
+            return new ProductCategoryExecution(ProductCategoryStateEnum.SUCCESS);
+        }
+    }
 }

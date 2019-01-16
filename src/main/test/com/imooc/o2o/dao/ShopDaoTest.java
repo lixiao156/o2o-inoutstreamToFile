@@ -8,6 +8,7 @@ import com.imooc.o2o.entity.ShopCategory;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Date;
 import java.util.List;
@@ -17,6 +18,8 @@ import static org.junit.Assert.*;
 public class ShopDaoTest extends BaseTest {
     @Autowired
     private ShopDao shopDao;
+//    @Autowired
+//    private ShopCategory shopCategory;
 
     @Test
     @Ignore
@@ -40,10 +43,11 @@ public class ShopDaoTest extends BaseTest {
         shop.setCreateTime(new Date());
         shop.setAdvice("审核中");
         int effectNum = shopDao.insertShop(shop);
-        assertEquals(1,effectNum);
+        assertEquals(1, effectNum);
 
 
     }
+
     @Test
 
     public void updateShop() {
@@ -53,16 +57,16 @@ public class ShopDaoTest extends BaseTest {
         shop.setShopAddr("测试地址");
         shop.setLastEditTime(new Date());
         int effectNum = shopDao.updateShop(shop);
-        assertEquals(1,effectNum);
+        assertEquals(1, effectNum);
     }
 
     @Test
 
-    public void queryByShopId(){
+    public void queryByShopId() {
         long shopId = 31;
         Shop shop = shopDao.queryByShopId(shopId);
-        System.out.println("areaId :"+shop.getArea().getAreaId());
-        System.out.println("areaName:"+shop.getArea().getAreaName());
+        System.out.println("areaId :" + shop.getArea().getAreaId());
+        System.out.println("areaName:" + shop.getArea().getAreaName());
 
     }
 
@@ -74,11 +78,33 @@ public class ShopDaoTest extends BaseTest {
         shopCondition.setOwner(owner);
         List<Shop> shopList = shopDao.queryShopList(shopCondition, 0, 5);
         System.out.println(shopList.size());
-        System.out.println("店铺列表的大小："+shopList.size());
+        System.out.println("店铺列表的大小：" + shopList.size());
         System.out.println();
 
         int count = shopDao.queryShopCount(shopCondition);
 
+
+    }
+
+    @Test
+    public void testQueryShopListAndCount() {
+        Shop shopCondition = new Shop();
+        ShopCategory childCategory = new ShopCategory();
+        ShopCategory parentCategory = new ShopCategory();
+        parentCategory.setShopCategoryId(12L);
+        childCategory.setParent(parentCategory);
+        // shopCondition.setOwner(owner);
+        List<Shop> shopList = shopDao.queryShopList(shopCondition, 0, 5);
+        int count = shopDao.queryShopCount(shopCondition);
+        System.out.println("店铺的列表大小：" + shopList.size());
+        System.out.println("店铺的总数" + count);
+        ShopCategory shopCategory = new ShopCategory();
+        shopCategory.setShopCategoryId(31L);
+        shopCondition.setShopCategory(shopCategory);
+        shopList = shopDao.queryShopList(shopCondition, 0, 2);
+        System.out.println("店铺列表的大小" + shopList.size());
+        count = shopDao.queryShopCount(shopCondition);
+        System.out.println("店铺的总数" + count);
 
     }
 }

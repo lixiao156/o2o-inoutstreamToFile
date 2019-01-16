@@ -18,10 +18,10 @@ public interface ProductCategoryDao {
      * @param
      * @return
      */
-//    List<ProductCategory> queryProductCategory(
-//            @Param("productCategoryCondition")
-//            ProductCategory productCategory
-//            );
+    List<ProductCategory> queryProductCategory(
+            @Param("productCategoryCondition")
+            ProductCategory productCategory
+            );
 
     /**
      * 通过商品的shopId获取店铺的商品类别

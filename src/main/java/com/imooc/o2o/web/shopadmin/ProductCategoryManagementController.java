@@ -1,12 +1,10 @@
 package com.imooc.o2o.web.shopadmin;
 
 import com.imooc.o2o.dto.Result;
-import com.imooc.o2o.entity.Product;
 import com.imooc.o2o.entity.ProductCategory;
 import com.imooc.o2o.entity.Shop;
-import com.imooc.o2o.enums.ProductCategoryExecution;
+import com.imooc.o2o.dto.ProductCategoryExecution;
 import com.imooc.o2o.enums.ProductCategoryStateEnum;
-import com.imooc.o2o.enums.ProductStateEnum;
 import com.imooc.o2o.service.ProductCategoryService;
 import com.imooc.o2o.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;

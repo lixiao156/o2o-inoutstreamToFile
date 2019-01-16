@@ -17,6 +17,12 @@ import java.util.List;
 public class ShopCategoryServiceImpl implements ShopCategoryService {
     @Autowired
     private ShopCategoryDao shopCategoryDao;
+
+    /**
+     * 返回shopcategory列表  Service层在这里只是做简单的转发Dao已经做过测试，所以不用Ut测试
+     * @param shopCategoryCondition
+     * @return
+     */
     @Override
     public List<ShopCategory> getShopCategoryList(ShopCategory shopCategoryCondition) {
         return shopCategoryDao.queryShopCategory(shopCategoryCondition);

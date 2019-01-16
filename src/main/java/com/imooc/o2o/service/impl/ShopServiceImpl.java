@@ -4,6 +4,7 @@ import com.imooc.o2o.dao.ShopDao;
 import com.imooc.o2o.dto.ImageHolder;
 import com.imooc.o2o.dto.ShopExecution;
 import com.imooc.o2o.entity.Shop;
+import com.imooc.o2o.entity.ShopCategory;
 import com.imooc.o2o.enums.ShopSateEnum;
 import com.imooc.o2o.exceptions.ShopOperationException;
 import com.imooc.o2o.service.ShopService;
@@ -27,6 +28,8 @@ import java.util.List;
 public class ShopServiceImpl implements ShopService {
     @Autowired
     private ShopDao shopDao;
+//    @Autowired
+//    private ShopCategory shopCategory;
 
     @Override
     public ShopExecution addShop(Shop shop, ImageHolder shopImgInputStream) throws ShopOperationException {
