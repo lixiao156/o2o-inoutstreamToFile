@@ -17,6 +17,7 @@ import com.imooc.o2o.util.ImageUtil;
 import com.imooc.o2o.util.PageCalculator;
 import com.imooc.o2o.util.PathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -230,6 +231,7 @@ public class ProductServiceImpl implements ProductService {
         ProductExecution pe = new ProductExecution();
         pe.setProductList(productList);
         pe.setCount(count);
+
         return pe;
     }
 

@@ -182,7 +182,6 @@
         </dependency>
 
 
-
         <!--  用于生成验证码的jar包-->
         <!-- https://mvnrepository.com/artifact/com.github.penggle/kaptcha -->
         <dependency>
@@ -205,6 +204,14 @@
             <version>1.18.4</version>
             <scope>provided</scope>
         </dependency>
+        <!--  redis 的jarbao-->
+        <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.1</version>
+        </dependency>
+
 
     </dependencies>
 

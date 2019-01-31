@@ -66,7 +66,7 @@ $(function () {
      $(".test").hide()
      演示 jQuery hide() 函数，隐藏所有 class="test" 的元素
      */
-    //若点击“我的”，则显示侧栏
+    // #:  绑定的html中的id 属性的值  若点击“我的”，则显示侧栏
     $('#me').click(function () {
         $.openPanel('#panel-right-demo');
     });
